@@ -1,0 +1,14 @@
+/* styles.css */
+
+/* Add styles here to customize the appearance of your app */
+
+#map-canvas {
+    background-color: skyblue;
+    width: 800px;
+    height: 600px;
+}
+
+#console-log {
+    width: 800px;
+    height: 200px;
+}

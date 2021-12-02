@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link href="./styles.css" rel="stylesheet">
+    <title>ferguson</title>
+  </head>
+  <body>
+    <h1>ferguson world</h1>
+    We are using Node.js <span id="node-version"></span>,
+    Chromium <span id="chrome-version"></span>,
+    and Electron <span id="electron-version"></span>.
+    <div id="map-2d">
+      <canvas id="map-canvas" width="5000" height="5000"></canvas>
+    </div>
+    <div id="menu">
+      <button id="connect">Connect</button>
+      <button id="disconnect">Disconnect</button>
+      <button id="sync-map">Sync Map</button>
+      <button id="refresh" disabled>Refresh</button>
+    </div>
+    <div id="console">
+      <textarea id="console-log" name="textarea"></textarea>
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+    <script src="./renderer.js"></script>
+  </body>
+</html>
