@@ -9,6 +9,8 @@ function createWindow () {
     width: 1920,
     height: 1080,
     title: app.getName(),
+    // set the background color to black
+    backgroundColor: "#D6D8DC",
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,

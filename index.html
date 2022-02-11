@@ -9,20 +9,39 @@
   </head>
   <body>
     <h1>ferguson world</h1>
-    We are using Node.js <span id="node-version"></span>,
-    Chromium <span id="chrome-version"></span>,
-    and Electron <span id="electron-version"></span>.
-    <div id="map-2d">
-      <canvas id="map-canvas" width="5000" height="5000"></canvas>
+    <p>'waste of time' Twitter: 'Go to the library and read a book instead'</p>
+    <div id="m-body">
+      <div id="map-2d">
+        <canvas id="map-canvas"></canvas>
+        <!-- <canvas id="map-canvas" width="15000" height="15000"></canvas> -->
+      </div>
+      <div id="device">
+        <h3>devices</h3>
+        <ul id="device-list"></ul>
+      </div>
+      <div id="info">
+        <h3>info</h3>
+        <ul>
+          <li><span>server: zlatan</span></li>
+          <li><span id="host"></span></li>
+          <li><span id="port"></span></li>
+          <li><span id="map"></span></li>
+        </ul>
+      </div>
     </div>
     <div id="menu">
       <button id="connect">Connect</button>
       <button id="disconnect">Disconnect</button>
-      <button id="sync-map">Sync Map</button>
-      <button id="refresh" disabled>Refresh</button>
+      <button id="grid">Grid</button>
     </div>
     <div id="console">
       <textarea id="console-log" name="textarea"></textarea>
+    </div>
+    <div id="footer">
+      <p>We are using Node.js <span id="node-version"></span>,
+        Chromium <span id="chrome-version"></span>,
+        and Electron <span id="electron-version"></span>.
+    </p>
     </div>
 
     <!-- You can also require other files to run in this process -->
