@@ -8,11 +8,38 @@
     display: flex;
 }
 
-#map-canvas {
+#map-2d {
+    position: relative;
+    width: 820px;
+    height: 620px;
+    margin: 10px;
+    border: 2px solid black;
+}
+
+canvas {
+    position: absolute;
+}
+
+#background-layer {
     background-color: skyblue;
     width: 800px;
     height: 600px;
     margin: 10px;
+    z-index: 1;
+}
+
+#grid-layer {
+    width: 800px;
+    height: 600px;
+    margin: 10px;
+    z-index: 2;
+}
+
+#device-layer {
+    width: 800px;
+    height: 600px;
+    margin: 10px;
+    z-index: 3;
 }
 
 #info {

@@ -10,10 +10,9 @@ const net = require('net')
 
 let client = null;
 
-let grid = null;
-
-let mapCanvas = null;
-let mapContext = null;
+let backgroundCanvas = null;
+let gridCanvas = null;
+let deviceCanvas = null;
 
 let consoleLog = null;
 
@@ -24,7 +23,6 @@ let deviceList = null;
 
 let connectBtn = null;
 let disconnectBtn = null;
-let gridBtn = null;
 
 
 initialize();
@@ -46,7 +44,6 @@ connectBtn.addEventListener('click', async () => {
   client.on('data', (data) => {
     let map = JSON.parse(data.toString().replaceAll("\'", "\""));
     consoleLog.value = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
-    drawGrid();
     drawDevice(map);
   });
   
@@ -66,10 +63,6 @@ disconnectBtn.addEventListener('click', async () => {
   disconnectBtn.disabled = true;
 })
 
-gridBtn.addEventListener('click', async () => {
-  grid = !grid;
-})
-
 function getMap() {
   client.write(':/map\n');
 }
@@ -85,40 +78,53 @@ function getFullTimestamp () {
 }
 
 function drawGrid() {
-  mapContext.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+  gridContext.clearRect(0, 0, gridCanvas.width, gridCanvas.height);
   for (var x = 0; x <= CONFIG.map.width; x += CONFIG.map.offset) {
-    mapContext.moveTo(x, 0);
-    mapContext.lineTo(x, CONFIG.map.height);
+    gridContext.moveTo(x, 0);
+    gridContext.lineTo(x, CONFIG.map.height);
   }
   for (var y = 0; y <= CONFIG.map.height; y += CONFIG.map.offset) {
-    mapContext.moveTo(0, y);
-    mapContext.lineTo(CONFIG.map.width, y);
+    gridContext.moveTo(0, y);
+    gridContext.lineTo(CONFIG.map.width, y);
   }
-  mapContext.stroke();
+  gridContext.stroke();
 }
 
 function drawDevice(map) {
   deviceList.innerHTML = '';
-  mapContext.beginPath();
+  deviceContext.clearRect(0, 0, deviceCanvas.width, deviceCanvas.height);
+  deviceContext.beginPath();
   for (let key in map) {
     let data = map[key].split(',');
-    mapContext.fillText(`${key}`, parseInt(data[0]), CONFIG.map.height-parseInt(data[1]));
-    mapContext.arc(parseInt(data[0]), CONFIG.map.height-parseInt(data[1]), CONFIG.vehicle.radius, 0, Math.PI*2, true);
+    deviceContext.fillText(`${key}`, parseInt(data[0]), CONFIG.map.height-parseInt(data[1]));
+    deviceContext.moveTo(parseInt(data[0]), CONFIG.map.height-parseInt(data[1]));
+    deviceContext.arc(parseInt(data[0]), CONFIG.map.height-parseInt(data[1]), CONFIG.vehicle.radius, 0, Math.PI*2, true);
+    deviceContext.stroke();
     let text_li = document.createElement('li');
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
   }
-  mapContext.closePath();
 }
 
 function initialize() {
-  mapCanvas = document.getElementById('map-canvas');
-  mapCanvas.width = CONFIG.map.width;
-  mapCanvas.height = CONFIG.map.height;
-  mapContext = mapCanvas.getContext('2d');
-  mapContext.font = 'bold 338px arial';
-  mapContext.strokeStyle = 'gray';
-  mapContext.lineWidth = 30;
+  backgroundCanvas = document.getElementById('background-layer');
+  backgroundCanvas.width = CONFIG.map.width;
+  backgroundCanvas.height = CONFIG.map.height;
+
+  gridCanvas = document.getElementById('grid-layer');
+  gridCanvas.width = CONFIG.map.width;
+  gridCanvas.height = CONFIG.map.height;
+  gridContext = gridCanvas.getContext('2d');
+  gridContext.strokeStyle = 'gray';
+  gridContext.lineWidth = 30;
+
+  deviceCanvas = document.getElementById('device-layer');
+  deviceCanvas.width = CONFIG.map.width;
+  deviceCanvas.height = CONFIG.map.height;
+  deviceContext = deviceCanvas.getContext('2d');
+  deviceContext.font = 'bold 338px arial';
+  deviceContext.strokeStyle = 'gray';
+  deviceContext.lineWidth = 30;
 
   consoleLog = document.getElementById('console-log');
 
@@ -131,16 +137,11 @@ function initialize() {
 
   deviceList = document.getElementById('device-list');
 
-  grid = true;
-
   connectBtn = document.getElementById('connect');
   connectBtn.disabled = false;
 
   disconnectBtn = document.getElementById('disconnect');
   disconnectBtn.disabled = true;
-
-  gridBtn = document.getElementById('grid');
-  gridBtn.disabled = true;
 
   drawGrid();
 }
