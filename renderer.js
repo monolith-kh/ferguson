@@ -52,7 +52,7 @@ connectBtn.addEventListener('click', async () => {
   });
   
   if(true) {
-    setInterval(getMap, CONFIG.delay);
+    getMap();
   }
 })
 
@@ -65,6 +65,7 @@ disconnectBtn.addEventListener('click', async () => {
 
 function getMap() {
   client.write(':/map\n');
+  setTimeout(getMap, CONFIG.delay);
 }
 
 function disconnect() {
