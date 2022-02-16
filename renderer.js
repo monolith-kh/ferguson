@@ -117,15 +117,15 @@ function initialize() {
   gridCanvas.height = CONFIG.map.height;
   gridContext = gridCanvas.getContext('2d');
   gridContext.strokeStyle = 'gray';
-  gridContext.lineWidth = 30;
+  gridContext.lineWidth = 15;
 
   deviceCanvas = document.getElementById('device-layer');
   deviceCanvas.width = CONFIG.map.width;
   deviceCanvas.height = CONFIG.map.height;
   deviceContext = deviceCanvas.getContext('2d');
-  deviceContext.font = 'bold 338px arial';
+  deviceContext.font = '150px arial';
   deviceContext.strokeStyle = 'gray';
-  deviceContext.lineWidth = 30;
+  deviceContext.lineWidth = 15;
 
   consoleLog = document.getElementById('console-log');
 
