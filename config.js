@@ -2,7 +2,7 @@ module.exports = {
     host: '192.168.41.254',
     // host: 'localhost',
     port: 8888,
-    delay: 1000,
+    delay: 100,
     map: {
         width: 15000,
         height: 15000,
