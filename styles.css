@@ -10,8 +10,8 @@
 
 #map-2d {
     position: relative;
-    width: 820px;
-    height: 620px;
+    width: 620px;
+    height: 820px;
     margin: 10px;
     border: 2px solid black;
 }
@@ -22,22 +22,22 @@ canvas {
 
 #background-layer {
     background-color: skyblue;
-    width: 800px;
-    height: 600px;
+    width: 600px;
+    height: 800px;
     margin: 10px;
     z-index: 1;
 }
 
 #grid-layer {
-    width: 800px;
-    height: 600px;
+    width: 600px;
+    height: 800px;
     margin: 10px;
     z-index: 2;
 }
 
 #device-layer {
-    width: 800px;
-    height: 600px;
+    width: 600px;
+    height: 800px;
     margin: 10px;
     z-index: 3;
 }

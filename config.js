@@ -4,12 +4,12 @@ module.exports = {
     port: 8888,
     delay: 100,
     map: {
-        width: 15000,
-        height: 15000,
-        offset: 1000,
+        width: 1500,
+        height: 2000,
+        offset: 100,
         grid: true
     },
     vehicle: {
-        radius: 600
+        radius: 60
     }
 }
