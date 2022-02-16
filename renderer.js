@@ -45,6 +45,7 @@ connectBtn.addEventListener('click', async () => {
     let map = JSON.parse(data.toString().replaceAll("\'", "\""));
     consoleLog.value = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
     drawDevice(map);
+    setTimeout(getMap, CONFIG.delay);
   });
   
   client.on('end', () => {
@@ -65,7 +66,6 @@ disconnectBtn.addEventListener('click', async () => {
 
 function getMap() {
   client.write(':/map\n');
-  setTimeout(getMap, CONFIG.delay);
 }
 
 function disconnect() {
