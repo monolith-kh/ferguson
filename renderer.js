@@ -24,6 +24,8 @@ let deviceList = null;
 let connectBtn = null;
 let disconnectBtn = null;
 
+let deviceImage = null;
+
 
 initialize();
 
@@ -94,13 +96,18 @@ function drawGrid() {
 function drawDevice(map) {
   deviceList.innerHTML = '';
   deviceContext.clearRect(0, 0, deviceCanvas.width, deviceCanvas.height);
-  deviceContext.beginPath();
   for (let key in map) {
     let data = map[key].split(',');
-    deviceContext.fillText(`${key}`, parseInt(data[0]), CONFIG.map.height-parseInt(data[1]));
-    deviceContext.moveTo(parseInt(data[0]), CONFIG.map.height-parseInt(data[1]));
-    deviceContext.arc(parseInt(data[0]), CONFIG.map.height-parseInt(data[1]), CONFIG.vehicle.radius, 0, Math.PI*2, true);
-    deviceContext.stroke();
+    deviceContext.fillText(
+      `${key}`,
+      parseInt(data[0]) - CONFIG.vehicle.radius,
+      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius));
+    deviceContext.drawImage(
+      deviceImage,
+      parseInt(data[0]) - CONFIG.vehicle.radius,
+      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
+      CONFIG.vehicle.radius*2,
+      CONFIG.vehicle.radius*2);
     let text_li = document.createElement('li');
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
@@ -117,15 +124,15 @@ function initialize() {
   gridCanvas.height = CONFIG.map.height;
   gridContext = gridCanvas.getContext('2d');
   gridContext.strokeStyle = 'gray';
-  gridContext.lineWidth = 15;
+  gridContext.lineWidth = 3;
 
   deviceCanvas = document.getElementById('device-layer');
   deviceCanvas.width = CONFIG.map.width;
   deviceCanvas.height = CONFIG.map.height;
   deviceContext = deviceCanvas.getContext('2d');
-  deviceContext.font = '150px arial';
-  deviceContext.strokeStyle = 'gray';
-  deviceContext.lineWidth = 15;
+  deviceContext.font = '34px arial';
+  deviceContext.strokeStyle = 'blue';
+  deviceContext.lineWidth = 5;
 
   consoleLog = document.getElementById('console-log');
 
@@ -134,7 +141,7 @@ function initialize() {
   port = document.getElementById('port');
   port.textContent = `port: ${CONFIG.port}`;
   map = document.getElementById('map');
-  map.textContent = `map: ${CONFIG.map.width}mm X ${CONFIG.map.height}mm, ${CONFIG.map.offset}mm`;
+  map.textContent = `map: ${CONFIG.map.width}cm X ${CONFIG.map.height}cm, ${CONFIG.map.offset}cm`;
 
   deviceList = document.getElementById('device-list');
 
@@ -143,6 +150,9 @@ function initialize() {
 
   disconnectBtn = document.getElementById('disconnect');
   disconnectBtn.disabled = true;
+
+  deviceImage = new Image();
+  deviceImage.src = './assets/sunface.svg';
 
   drawGrid();
 }
