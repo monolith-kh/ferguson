@@ -19,12 +19,23 @@ let consoleLog = null;
 let host = null;
 let port = null;
 let map = null;
+
+let networkTime = null;
+let dataParseTime = null;
+let drawTime = null;
+let totalTime = null;
+
 let deviceList = null;
 
 let connectBtn = null;
 let disconnectBtn = null;
 
 let deviceImage = null;
+
+let t1 = 0.0;
+let t2 = 0.0;
+let t3 = 0.0;
+let t4 = 0.0;
 
 
 initialize();
@@ -44,10 +55,12 @@ connectBtn.addEventListener('click', async () => {
   });
 
   client.on('data', (data) => {
+    t2 = performance.now();
+    setTimeout(getMap, CONFIG.delay);
     let map = JSON.parse(data.toString().replaceAll("\'", "\""));
     consoleLog.value = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
     drawDevice(map);
-    setTimeout(getMap, CONFIG.delay);
+    showPerformance();
   });
   
   client.on('end', () => {
@@ -67,6 +80,7 @@ disconnectBtn.addEventListener('click', async () => {
 })
 
 function getMap() {
+  t1 = performance.now();
   client.write(':/map\n');
 }
 
@@ -93,7 +107,15 @@ function drawGrid() {
   gridContext.stroke();
 }
 
+function showPerformance() {
+  networkTime.textContent = `network: ${(t2-t1).toFixed(2)} msec`;
+  dataParseTime.textContent = `data parse: ${(t3-t2).toFixed(2)} msec`;
+  drawTime.textContent = `draw: ${(t4-t3).toFixed(2)} msec`;
+  totalTime.textContent = `total: ${(t4-t1).toFixed(2)} msec`;
+}
+
 function drawDevice(map) {
+  t3 = performance.now();
   deviceList.innerHTML = '';
   deviceContext.clearRect(0, 0, deviceCanvas.width, deviceCanvas.height);
   for (let key in map) {
@@ -112,6 +134,7 @@ function drawDevice(map) {
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
   }
+  t4 = performance.now();
 }
 
 function initialize() {
@@ -142,6 +165,11 @@ function initialize() {
   port.textContent = `port: ${CONFIG.port}`;
   map = document.getElementById('map');
   map.textContent = `map: ${CONFIG.map.width}cm X ${CONFIG.map.height}cm, ${CONFIG.map.offset}cm`;
+
+  networkTime = document.getElementById('network-time');
+  dataParseTime = document.getElementById('data-parse-time');
+  drawTime = document.getElementById('draw-time');
+  totalTime = document.getElementById('total-time');
 
   deviceList = document.getElementById('device-list');
 
