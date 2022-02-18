@@ -167,9 +167,13 @@ function initialize() {
   map.textContent = `map: ${CONFIG.map.width}cm X ${CONFIG.map.height}cm, ${CONFIG.map.offset}cm`;
 
   networkTime = document.getElementById('network-time');
+  networkTime.textContent = `network: n/a`;
   dataParseTime = document.getElementById('data-parse-time');
+  dataParseTime.textContent = `data parse: n/a`;
   drawTime = document.getElementById('draw-time');
+  drawTime.textContent = `draw: n/a`;
   totalTime = document.getElementById('total-time');
+  totalTime.textContent = `total: n/a`;
 
   deviceList = document.getElementById('device-list');
 
