@@ -19,11 +19,13 @@ let consoleLog = null;
 let host = null;
 let port = null;
 let map = null;
+let online = null;
 
 let networkTime = null;
 let dataParseTime = null;
 let drawTime = null;
 let totalTime = null;
+let frameTime = null;
 
 let deviceList = null;
 
@@ -40,9 +42,12 @@ let t4 = 0.0;
 
 initialize();
 
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
+
 connectBtn.addEventListener('click', async () => {
 
-  client = net.createConnection({ host: CONFIG.host, port: CONFIG.port }, () => {
+  client = net.createConnection({ host: CONFIG.host, port: CONFIG.port, timeout: 5 }, () => {
     consoleLog.value = `connect\n${consoleLog.value}`;
     console.log('connected to server');
     connectBtn.disabled = true;
@@ -137,6 +142,10 @@ function drawDevice(map) {
   t4 = performance.now();
 }
 
+function updateOnlineStatus () {
+  online.innerHTML = navigator.onLine ? 'network status is online' : 'network status is offline';
+}
+
 function initialize() {
   backgroundCanvas = document.getElementById('background-layer');
   backgroundCanvas.width = CONFIG.map.width;
@@ -165,6 +174,7 @@ function initialize() {
   port.textContent = `port: ${CONFIG.port}`;
   map = document.getElementById('map');
   map.textContent = `map: ${CONFIG.map.width}cm X ${CONFIG.map.height}cm, ${CONFIG.map.offset}cm`;
+  online = document.getElementById('online');
 
   networkTime = document.getElementById('network-time');
   networkTime.textContent = `network: n/a`;
@@ -174,6 +184,8 @@ function initialize() {
   drawTime.textContent = `draw: n/a`;
   totalTime = document.getElementById('total-time');
   totalTime.textContent = `total: n/a`;
+  frameTime = document.getElementById('frame-time');
+  frameTime.textContent = `frame time: ${CONFIG.delay} msec`;
 
   deviceList = document.getElementById('device-list');
 
@@ -186,5 +198,8 @@ function initialize() {
   deviceImage = new Image();
   deviceImage.src = './assets/sunface.svg';
 
+  updateOnlineStatus();
+
   drawGrid();
 }
+
