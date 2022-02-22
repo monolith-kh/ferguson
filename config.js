@@ -1,4 +1,5 @@
 module.exports = {
+    version: '1.1.0',
     host: '192.168.41.254',
     // host: 'localhost',
     port: 8888,

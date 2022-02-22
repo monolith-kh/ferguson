@@ -7,7 +7,6 @@
 
 const CONFIG = require('./config')
 const net = require('net')
-const fs = require('fs');
 
 let client = null;
 
@@ -235,11 +234,8 @@ function initialize() {
   npcImage = new Image();
   npcImage.src = './assets/sunface.svg';
 
-  const file = fs.readFileSync('./package.json', 'utf8');
-  pConfig = JSON.parse(file.toString());
-
   version = document.getElementById('version');
-  version.textContent = `version: ${pConfig.version}`;
+  version.textContent = `version: ${CONFIG.version}`;
 
   updateOnlineStatus();
 
