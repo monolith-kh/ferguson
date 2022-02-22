@@ -7,6 +7,7 @@
 
 const CONFIG = require('./config')
 const net = require('net')
+const fs = require('fs');
 
 let client = null;
 
@@ -16,6 +17,7 @@ let deviceCanvas = null;
 
 let consoleLog = null;
 
+let version = null;
 let host = null;
 let port = null;
 let map = null;
@@ -33,6 +35,12 @@ let connectBtn = null;
 let disconnectBtn = null;
 
 let deviceImage = null;
+let itemImage = null;
+let npcImage = null;
+
+let pConfig = null;
+
+let timeout = null;
 
 let t1 = 0.0;
 let t2 = 0.0;
@@ -52,6 +60,7 @@ connectBtn.addEventListener('click', async () => {
     console.log('connected to server');
     connectBtn.disabled = true;
     disconnectBtn.disabled = false;
+    getMap();
   });
 
   client.on('error', () => {
@@ -61,10 +70,16 @@ connectBtn.addEventListener('click', async () => {
 
   client.on('data', (data) => {
     t2 = performance.now();
-    setTimeout(getMap, CONFIG.delay);
-    let map = JSON.parse(data.toString().replaceAll("\'", "\""));
-    consoleLog.value = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
-    drawDevice(map);
+    timeout = setTimeout(getMap, CONFIG.delay);
+    if ((t2-t1)<=CONFIG.networkThreshold) {
+      let map = JSON.parse(data.toString().replaceAll("\'", "\""));
+      consoleLog.value = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
+      backgroundCanvas.style.backgroundColor = 'skyblue';
+      drawDevice(map);
+    }else {
+      consoleLog.value = `${getFullTimestamp()}\tdelayed network: ${(t2-t1).toFixed(2)} msec\n${consoleLog.value}`;
+      backgroundCanvas.style.backgroundColor = 'yellow';
+    }
     showPerformance();
   });
   
@@ -72,16 +87,17 @@ connectBtn.addEventListener('click', async () => {
     console.log('disconnected from server');
   });
   
-  if(true) {
-    getMap();
-  }
 })
 
 disconnectBtn.addEventListener('click', async () => {
   disconnect();
   consoleLog.value = `disconnected\n${consoleLog.value}`;
-  connectBtn.disabled = false;
+  clearTimeout(timeout);
   disconnectBtn.disabled = true;
+  setTimeout(function(){
+    connectBtn.disabled = false;
+    backgroundCanvas.style.backgroundColor = 'turquoise';
+  }, 1000);
 })
 
 function getMap() {
@@ -129,12 +145,28 @@ function drawDevice(map) {
       `${key}`,
       parseInt(data[0]) - CONFIG.vehicle.radius,
       CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius));
-    deviceContext.drawImage(
-      deviceImage,
-      parseInt(data[0]) - CONFIG.vehicle.radius,
-      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-      CONFIG.vehicle.radius*2,
-      CONFIG.vehicle.radius*2);
+    if (key.startsWith('item_')) {
+      deviceContext.drawImage(
+        itemImage,
+        parseInt(data[0]) - CONFIG.vehicle.radius,
+        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
+        CONFIG.vehicle.radius*2,
+        CONFIG.vehicle.radius*2);
+    } else if (key.startsWith('npc_')) {
+      deviceContext.drawImage(
+        npcImage,
+        parseInt(data[0]) - CONFIG.vehicle.radius,
+        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
+        CONFIG.vehicle.radius*2,
+        CONFIG.vehicle.radius*2);
+    } else {
+      deviceContext.drawImage(
+        deviceImage,
+        parseInt(data[0]) - CONFIG.vehicle.radius,
+        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
+        CONFIG.vehicle.radius*2,
+        CONFIG.vehicle.radius*2);
+    }
     let text_li = document.createElement('li');
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
@@ -150,6 +182,7 @@ function initialize() {
   backgroundCanvas = document.getElementById('background-layer');
   backgroundCanvas.width = CONFIG.map.width;
   backgroundCanvas.height = CONFIG.map.height;
+  backgroundCanvas.style.backgroundColor = 'turquoise';
 
   gridCanvas = document.getElementById('grid-layer');
   gridCanvas.width = CONFIG.map.width;
@@ -196,7 +229,17 @@ function initialize() {
   disconnectBtn.disabled = true;
 
   deviceImage = new Image();
-  deviceImage.src = './assets/sunface.svg';
+  deviceImage.src = './assets/device.svg';
+  itemImage = new Image();
+  itemImage.src = './assets/item.svg';
+  npcImage = new Image();
+  npcImage.src = './assets/sunface.svg';
+
+  const file = fs.readFileSync('./package.json', 'utf8');
+  pConfig = JSON.parse(file.toString());
+
+  version = document.getElementById('version');
+  version.textContent = `version: ${pConfig.version}`;
 
   updateOnlineStatus();
 
