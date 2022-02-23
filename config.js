@@ -13,5 +13,5 @@ module.exports = {
     vehicle: {
         radius: 60
     },
-    networkThreshold: 20.0
+    networkThreshold: 50.0
 }

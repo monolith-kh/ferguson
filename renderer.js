@@ -73,11 +73,11 @@ connectBtn.addEventListener('click', async () => {
     if ((t2-t1)<=CONFIG.networkThreshold) {
       let map = JSON.parse(data.toString().replaceAll("\'", "\""));
       consoleLog.value = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
-      backgroundCanvas.style.backgroundColor = 'skyblue';
+      backgroundCanvas.style.backgroundColor = '#066afe';
       drawDevice(map);
     }else {
       consoleLog.value = `${getFullTimestamp()}\tdelayed network: ${(t2-t1).toFixed(2)} msec\n${consoleLog.value}`;
-      backgroundCanvas.style.backgroundColor = 'yellow';
+      backgroundCanvas.style.backgroundColor = '#fde500';
     }
     showPerformance();
   });
@@ -181,7 +181,7 @@ function initialize() {
   backgroundCanvas = document.getElementById('background-layer');
   backgroundCanvas.width = CONFIG.map.width;
   backgroundCanvas.height = CONFIG.map.height;
-  backgroundCanvas.style.backgroundColor = 'turquoise';
+  backgroundCanvas.style.backgroundColor = '#00adee';
 
   gridCanvas = document.getElementById('grid-layer');
   gridCanvas.width = CONFIG.map.width;
