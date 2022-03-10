@@ -146,6 +146,12 @@ function drawDevice(map) {
     draw_y = CONFIG.map.height - parseInt(data[1]);
     deviceContext.translate(draw_x, draw_y);
 
+    draw_radian = 0;
+    if (data.length > 4) {
+      draw_radian = (450 - data[6]) * Math.PI / 180;
+      deviceContext.rotate(draw_radian);
+    }
+
     deviceContext.fillText(
       `${key}`,
       CONFIG.vehicle.radius * -1,
@@ -165,6 +171,10 @@ function drawDevice(map) {
       CONFIG.vehicle.radius*2);
 
     let text_li = document.createElement('li');
+
+    if (data.length > 4) {
+      deviceContext.rotate(draw_radian * -1);
+    }
 
     deviceContext.translate(draw_x * -1, draw_y * -1);
 
