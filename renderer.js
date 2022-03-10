@@ -138,12 +138,18 @@ function drawDevice(map) {
   t3 = performance.now();
   deviceList.innerHTML = '';
   deviceContext.clearRect(0, 0, deviceCanvas.width, deviceCanvas.height);
+
   for (let key in map) {
     let data = map[key].split(',');
+
+    draw_x = parseInt(data[0]);
+    draw_y = CONFIG.map.height - parseInt(data[1]);
+    deviceContext.translate(draw_x, draw_y);
+
     deviceContext.fillText(
       `${key}`,
-      parseInt(data[0]) - CONFIG.vehicle.radius,
-      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius));
+      CONFIG.vehicle.radius * -1,
+      CONFIG.vehicle.radius * -1);
 
     image = deviceImage;
     if (key.startsWith('item_')) {
@@ -151,18 +157,21 @@ function drawDevice(map) {
     } else if (key.startsWith('npc_')) {
       image = npcImage;
     }
-
     deviceContext.drawImage(
       image,
-      parseInt(data[0]) - CONFIG.vehicle.radius,
-      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
+      CONFIG.vehicle.radius * -1,
+      CONFIG.vehicle.radius * -1,
       CONFIG.vehicle.radius*2,
       CONFIG.vehicle.radius*2);
 
     let text_li = document.createElement('li');
+
+    deviceContext.translate(draw_x * -1, draw_y * -1);
+
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
   }
+
   t4 = performance.now();
 }
 
