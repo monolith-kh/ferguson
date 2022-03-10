@@ -138,38 +138,50 @@ function drawDevice(map) {
   t3 = performance.now();
   deviceList.innerHTML = '';
   deviceContext.clearRect(0, 0, deviceCanvas.width, deviceCanvas.height);
+
   for (let key in map) {
     let data = map[key].split(',');
+
+    draw_x = parseInt(data[0]);
+    draw_y = CONFIG.map.height - parseInt(data[1]);
+    deviceContext.translate(draw_x, draw_y);
+
+    draw_radian = 0;
+    if (data.length > 4) {
+      draw_radian = (450 - data[6]) * Math.PI / 180;
+      deviceContext.rotate(draw_radian);
+    }
+
     deviceContext.fillText(
       `${key}`,
-      parseInt(data[0]) - CONFIG.vehicle.radius,
-      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius));
+      CONFIG.vehicle.radius * -1,
+      CONFIG.vehicle.radius * -1);
+
+    image = deviceImage;
     if (key.startsWith('item_')) {
-      deviceContext.drawImage(
-        itemImage,
-        parseInt(data[0]) - CONFIG.vehicle.radius,
-        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-        CONFIG.vehicle.radius*2,
-        CONFIG.vehicle.radius*2);
+      image = itemImage;
     } else if (key.startsWith('npc_')) {
-      deviceContext.drawImage(
-        npcImage,
-        parseInt(data[0]) - CONFIG.vehicle.radius,
-        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-        CONFIG.vehicle.radius*2,
-        CONFIG.vehicle.radius*2);
-    } else {
-      deviceContext.drawImage(
-        deviceImage,
-        parseInt(data[0]) - CONFIG.vehicle.radius,
-        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-        CONFIG.vehicle.radius*2,
-        CONFIG.vehicle.radius*2);
+      image = npcImage;
     }
+    deviceContext.drawImage(
+      image,
+      CONFIG.vehicle.radius * -1,
+      CONFIG.vehicle.radius * -1,
+      CONFIG.vehicle.radius*2,
+      CONFIG.vehicle.radius*2);
+
     let text_li = document.createElement('li');
+
+    if (data.length > 4) {
+      deviceContext.rotate(draw_radian * -1);
+    }
+
+    deviceContext.translate(draw_x * -1, draw_y * -1);
+
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
   }
+
   t4 = performance.now();
 }
 
