@@ -144,28 +144,21 @@ function drawDevice(map) {
       `${key}`,
       parseInt(data[0]) - CONFIG.vehicle.radius,
       CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius));
+
+    image = deviceImage;
     if (key.startsWith('item_')) {
-      deviceContext.drawImage(
-        itemImage,
-        parseInt(data[0]) - CONFIG.vehicle.radius,
-        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-        CONFIG.vehicle.radius*2,
-        CONFIG.vehicle.radius*2);
+      image = itemImage;
     } else if (key.startsWith('npc_')) {
-      deviceContext.drawImage(
-        npcImage,
-        parseInt(data[0]) - CONFIG.vehicle.radius,
-        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-        CONFIG.vehicle.radius*2,
-        CONFIG.vehicle.radius*2);
-    } else {
-      deviceContext.drawImage(
-        deviceImage,
-        parseInt(data[0]) - CONFIG.vehicle.radius,
-        CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
-        CONFIG.vehicle.radius*2,
-        CONFIG.vehicle.radius*2);
+      image = npcImage;
     }
+
+    deviceContext.drawImage(
+      image,
+      parseInt(data[0]) - CONFIG.vehicle.radius,
+      CONFIG.map.height - (parseInt(data[1]) + CONFIG.vehicle.radius),
+      CONFIG.vehicle.radius*2,
+      CONFIG.vehicle.radius*2);
+
     let text_li = document.createElement('li');
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
     deviceList.appendChild(text_li);
