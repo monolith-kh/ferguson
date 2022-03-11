@@ -73,16 +73,17 @@ connectBtn.addEventListener('click', async () => {
   client.on('data', (data) => {
     t2 = performance.now();
     timeout = setTimeout(getMap, CONFIG.delay);
+    let newConsoleMessage = ""
     if ((t2-t1)<=CONFIG.networkThreshold) {
       let map = JSON.parse(data.toString().replaceAll("\'", "\""));
-      consoleMessage = `${getFullTimestamp()}\t${data.toString()}\n${consoleLog.value}`;
+      newConsoleMessage = `${getFullTimestamp()}\t${data.toString()}`;
       backgroundCanvas.style.backgroundColor = '#066afe';
       drawDevice(map);
     }else {
-      consoleMessage = `${getFullTimestamp()}\tdelayed network: ${(t2-t1).toFixed(2)} msec\n${consoleLog.value}`;
+      newConsoleMessage = `${getFullTimestamp()}\tdelayed network: ${(t2-t1).toFixed(2)} msec`;
       backgroundCanvas.style.backgroundColor = '#fde500';
     }
-    consoleMessage = consoleMessage.substring(0, CONSOLE_LIMIT_LENGTH);
+    consoleMessage = newConsoleMessage + "\n" + consoleMessage.substring(0, CONSOLE_LIMIT_LENGTH);
     consoleLog.value = consoleMessage
     showPerformance();
   });
