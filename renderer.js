@@ -141,8 +141,14 @@ function showPerformance() {
 
 function drawDevice(map) {
   t3 = performance.now();
-  deviceList.innerHTML = '';
+
+  if (deviceList.firstChild) {
+    deviceList.removeChild(deviceList.firstChild);
+  }
+
   deviceContext.clearRect(0, 0, deviceCanvas.width, deviceCanvas.height);
+
+  ulTag = document.createElement('ul');
 
   for (let key in map) {
     let data = map[key].split(',');
@@ -184,7 +190,8 @@ function drawDevice(map) {
     deviceContext.translate(draw_x * -1, draw_y * -1);
 
     text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
-    deviceList.appendChild(text_li);
+    ulTag.appendChild(text_li);
+    deviceList.appendChild(ulTag);
   }
 
   t4 = performance.now();
