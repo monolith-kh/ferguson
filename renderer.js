@@ -8,6 +8,8 @@
 const CONFIG = require('./config')
 const net = require('net')
 
+const CONSOLE_LIMIT_LENGTH = 300 * 1000
+
 let client = null;
 
 let backgroundCanvas = null;
@@ -80,6 +82,7 @@ connectBtn.addEventListener('click', async () => {
       consoleMessage = `${getFullTimestamp()}\tdelayed network: ${(t2-t1).toFixed(2)} msec\n${consoleLog.value}`;
       backgroundCanvas.style.backgroundColor = '#fde500';
     }
+    consoleMessage = consoleMessage.substring(0, CONSOLE_LIMIT_LENGTH);
     consoleLog.value = consoleMessage
     showPerformance();
   });
