@@ -28,7 +28,8 @@
   "dependencies": {
     "electron-builder": "^22.14.13",
     "electron-squirrel-startup": "^1.0.0",
-    "jquery": "^3.6.0"
+    "jquery": "^3.6.0",
+    "dataclass": "2.0.0"
   },
   "config": {
     "forge": {
