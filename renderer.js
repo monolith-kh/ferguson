@@ -7,8 +7,10 @@
 
 const CONFIG = require('./config')
 const net = require('net')
+const PositionInfo = require('./position_info.js').PositionInfo
 
 const CONSOLE_LIMIT_LENGTH = 300 * 1000
+
 
 let client = null;
 
@@ -48,6 +50,8 @@ let t2 = 0.0;
 let t3 = 0.0;
 let t4 = 0.0;
 
+let idMap = {};
+let idMapLock = false;
 
 initialize();
 
@@ -75,8 +79,14 @@ connectBtn.addEventListener('click', async () => {
     timeout = setTimeout(getMap, CONFIG.delay);
     let newConsoleMessage = ""
     if ((t2-t1)<=CONFIG.networkThreshold) {
-      let map = JSON.parse(data.toString().replaceAll("\'", "\""));
-      newConsoleMessage = `${getFullTimestamp()}\t${data.toString()}`;
+      let map = []
+      objectCount = data.length / PositionInfo.BYTES_LENGTH
+      for (i = 0; i < objectCount; i++) {
+        objectBytes = data.slice(i * PositionInfo.BYTES_LENGTH, (i + 1) * PositionInfo.BYTES_LENGTH);
+        map.push(PositionInfo.fromBytes(objectBytes))
+      }
+
+      newConsoleMessage = `${getFullTimestamp()}\t${JSON.stringify(map)}`;
       backgroundCanvas.style.backgroundColor = '#066afe';
       drawDevice(map);
     }else {
@@ -140,6 +150,33 @@ function showPerformance() {
   totalTime.textContent = `total: ${(t4-t1).toFixed(2)} msec`;
 }
 
+function getObjectName(seq) {
+  result = idMap[seq];
+
+  if (result != undefined) {
+    return result;
+  }
+
+  if (!idMapLock) {
+    idMapLock = true;
+    gameClient = net.createConnection({ host: CONFIG.host, port: 8889, timeout: 5 }, () => {
+      console.log('connected to gameserver');
+      gameClient.write(':/get_objectmap');
+    });
+
+    gameClient.on('data', (idMapData) => {
+      console.log(idMapData.toString());
+      objectMap = JSON.parse(idMapData.toString().replace("'", '"'));
+      idMap = objectMap;
+      console.log(idMap);
+      gameClient.write(':/quit');
+      idMapLock = false;
+    });
+
+  }
+  return "Unknown";
+}
+
 function drawDevice(map) {
   t3 = performance.now();
 
@@ -151,18 +188,16 @@ function drawDevice(map) {
 
   ulTag = document.createElement('ul');
 
-  for (let key in map) {
-    let data = map[key].split(',');
-
-    draw_x = parseInt(data[0]);
-    draw_y = CONFIG.map.height - parseInt(data[1]);
+  for (let item of map) {
+    draw_x = item.positionX;
+    draw_y = CONFIG.map.height - item.positionY;
     deviceContext.translate(draw_x, draw_y);
 
     draw_radian = 0;
-    if (data.length > 4) {
-      draw_radian = (450 - data[6]) * Math.PI / 180;
-      deviceContext.rotate(draw_radian);
-    }
+    draw_radian = (450 - item.rotationZ) * Math.PI / 180;
+    deviceContext.rotate(draw_radian);
+
+    key = getObjectName(item.seq);
 
     deviceContext.fillText(
       `${key}`,
@@ -184,13 +219,11 @@ function drawDevice(map) {
 
     let text_li = document.createElement('li');
 
-    if (data.length > 4) {
-      deviceContext.rotate(draw_radian * -1);
-    }
+    deviceContext.rotate(draw_radian * -1);
 
     deviceContext.translate(draw_x * -1, draw_y * -1);
 
-    text_li.appendChild(document.createTextNode(`${key}: ${data[0]}, ${data[1]}, ${data[2]} (${data[3]})`));
+    text_li.appendChild(document.createTextNode(`${key}: ${item.positionX}, ${item.positionY}, ${item.positionZ} (${item.pqf})`));
     ulTag.appendChild(text_li);
     deviceList.appendChild(ulTag);
   }
