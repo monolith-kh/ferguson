@@ -174,7 +174,7 @@ function getObjectName(seq) {
     });
 
   }
-  return "Unknown";
+  return `Unknown (${seq})`;
 }
 
 function drawDevice(map) {
