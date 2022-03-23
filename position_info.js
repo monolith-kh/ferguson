@@ -18,7 +18,7 @@ class PositionInfo extends Data {
 
   static fromBytes = function(buffer) {
     let result = this.create({
-       seq: buffer.slice(0, 2).readInt16BE(),
+       seq: buffer.slice(0, 2).readUInt16BE(),
        positionX: buffer.slice(2, 6).readInt32BE(),
        positionY: buffer.slice(6, 10).readInt32BE(),
        positionZ: buffer.slice(10, 14).readInt32BE(),
